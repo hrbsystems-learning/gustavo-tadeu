@@ -4,9 +4,9 @@ import json
 
 def get_access_token():
     params = {
-        'grant_type':'client_credentials',
-        'client_id':'c57a0459f6t141659ea75cccb393c111',
-        'client_secret': '77cbf92b71553e85ce3bfd505214f40b'
+        'grant_type':'client_credentials', 
+        'client_id':'c57a0459f6t141659ea75cccb393c111', # replece this field value with your client_id - your can get your client_id accessing your snov account data
+        'client_secret': '77cbf92b71553e85ce3bfd505214f40b' # replece this field value with your client_secret - your can get your client_secret accessing your snov account data
     }
     res = requests.post('https://api.snov.io/v1/oauth/access_token', data=params)
     resText = res.text.encode('ascii','ignore')
