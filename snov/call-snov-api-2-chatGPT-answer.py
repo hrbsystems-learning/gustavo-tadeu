@@ -1,7 +1,16 @@
+# This code is a chatGPT answer from de prompt below:
+# Prompt:
+# Please, write a python script that is capable do make a POST HTTP request to snov api.
+
 # This code will send a POST request to the snov api with your api-key and the parameters for adding a prospect to a list.
 # If the request is successful, it will return a JSON object with the status and the message.
 # If the request fails, it will return the status code and the error message.
 # You can find more information and examples of the snov api methods and parameters on their official website https://snov.io/knowledgebase/how-to-use-snov-io-api/.
+
+# my comments from the chatGPT answer:
+# the info below, I got from the snov api documentation. 
+# The code is correct, but chatGPT doesn't take in account the necessity to get the access-token first of all.
+
 
 import requests
 

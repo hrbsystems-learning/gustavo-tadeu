@@ -1,3 +1,12 @@
+
+# This code is a chatGPT answer from de prompt below:
+# Prompt:
+# Please, write a python script that is capable do make a GET HTTP request to snov api.
+
+# my comments from the chatGPT answer:
+# the code is correct but chatGPT doesn't take in account the necessity to get the access-token first of all.
+# this information I got from the snov api documentation. 
+
 import requests
 
 api_key = "your_api_key_here"
@@ -9,6 +18,7 @@ params = {
 "lastId": 0 # The ID of the last email to start from (0 for the first page)
 }
 
+# Make the GET request and get the response
 response = requests.get(endpoint, params=params, headers={"Authorization": api_key})
 
 # Check if the request was successful
