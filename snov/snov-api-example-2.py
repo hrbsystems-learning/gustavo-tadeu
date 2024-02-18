@@ -4,42 +4,40 @@
 # and replace respective parameters values in function get_access_token() function definition
 
 
-
 import requests
 import json
 
 
 def get_access_token():
     params = {
-        'grant_type':'client_credentials', 
-        'client_id':'c57a0459f6t141659ea75cccb393c111', # replece this field value with your client_id
-        'client_secret': '77cbf92b71553e85ce3bfd505214f40b' # replece this field value with your client_secret
+        'grant_type': 'client_credentials',
+        'client_id': 'c57a0459f6t141659ea75cccb393c111',  # replace this field value with your client_id
+        'client_secret': '77cbf92b71553e85ce3bfd505214f40b'  # replace this field value with your client_secret
     }
     res = requests.post('https://api.snov.io/v1/oauth/access_token', data=params)
-    resText = res.text.encode('ascii','ignore')
-    return json.loads(resText)['access_token']
+    res_text = res.text.encode('ascii', 'ignore')
+    return json.loads(res_text)['access_token']
 
 
 def get_domain_search(token):
     params = {
-    'access_token': token,
-    'domain': 'octagon.com',
-    'type': 'all',
-    'limit': 100,
-    'lastId': 0,
-    'positions[]': ['Software Developer','QA']
+        'access_token': token,
+        'domain': 'octagon.com',
+        'type': 'all',
+        'limit': 100,
+        'lastId': 0,
+        'positions[]': ['Software Developer', 'QA']
     }
     res = requests.get('https://api.snov.io/v2/domain-emails-with-info', params=params)
     return json.loads(res.text)
 
 
 def get_email_count(token):
-    params = {'access_token':token,
-            'domain':'octagon.com'
-    }
+    params = {'access_token': token,
+              'domain': 'octagon.com'
+              }
     res = requests.post('https://api.snov.io/v1/get-domain-emails-count', data=params)
     return json.loads(res.text)
-
 
 
 # Begin the program
