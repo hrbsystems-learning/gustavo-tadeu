@@ -62,7 +62,7 @@ def generateCaptchaImage(session : requests.session):
     url = "https://iptu.prefeitura.sp.gov.br/Api/EmitirBoleto/GerarCaptcha"
     params = {"_": 1708869910143}
     response = session.get(url, params=params)
-    return response.content
+    return str(response.content)
 
 def is_not_debitAutomatic(session, numero_contribuinte, parcela_a_pagar, ano_exercicio, captcha_text):
     pass
