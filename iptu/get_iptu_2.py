@@ -20,14 +20,59 @@ import pytesseract
 
 # input data
 input_data =[
-{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
+{ 'numero_contribuinte' : '019.061.0453-0', 'parcela': 1, 'ano_exercicio': 2024},
 { 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
 { 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
 { 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
 { 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
 ]
 
-# Define the function that takes a base64 encoded image string as input
+
+# Define functions
+
+def extract_image(response):
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    # Find the first img tag that has a src attribute starting with "data:image/png;base64,"
+    img_tag = soup.find("img", src=lambda x: x and x.startswith("data:image/png;base64,"))
+    # If the img tag is found, extract the base64 data
+    if img_tag:
+        base64_data = img_tag["src"].split(",")[1]
+        # Decode the base64 data and convert it to bytes
+        img_data = base64.b64decode(base64_data)
+        # Create a PIL image object from the bytes
+        img = Image.open(io.BytesIO(img_data))
+        # Save the image to a file with a unique name
+        img.save(f"image_{img_tag['alt']}.png")
+        # Return the PIL image object
+        return img
+    # If the img tag is not found, return None
+    else:
+        return None
+
+
+
+def extract_image1(response):
+    # Parse the HTML content using BeautifulSoup
+    soup = BeautifulSoup(response.content, "html.parser")
+    # Find the first img tag that has a src attribute starting with "data:image/png;base64,"
+    img_tag = soup.find("img", src=lambda x: x and x.startswith("data:image/png;base64,"))
+    # If the img tag is found, extract the base64 data
+    if img_tag:
+        base64_data = img_tag["src"].split(",")[1]
+        # Decode the base64 data and convert it to bytes
+        img_data = base64.b64decode(base64_data)
+        # Create a BytesIO object from the bytes
+        img_bytes = io.BytesIO(img_data)
+        # Reopen the BytesIO object as a PIL image
+        img = Image.open(img_bytes)
+        # Return the PIL image in png format
+        return img
+    # If the img tag is not found, return None
+    else:
+        return None
+
+
 def decode_and_ocr(image_string):
     image_bytes = base64.b64decode(image_string)
     image = Image.open(image_bytes)
@@ -62,7 +107,8 @@ def generateCaptchaImage(session : requests.session):
     url = "https://iptu.prefeitura.sp.gov.br/Api/EmitirBoleto/GerarCaptcha"
     params = {"_": 1708869910143}
     response = session.get(url, params=params)
-    return str(response.content)
+    image = extract_image1(response)
+    return image
 
 def is_not_debitAutomatic(session, numero_contribuinte, parcela_a_pagar, ano_exercicio, captcha_text):
     pass
@@ -75,7 +121,7 @@ def process_input_data(input_data_list : list) -> None:
     session = requests.session()
     session.get("https://iptu.prefeitura.sp.gov.br")
 
-    current_numero_contribuinte = '' # initial value - empty string
+    current_numero_contribuinte = '019.061.0453-0' # initial value - empty string
     current_parcela = 1 # default value 1
     current_ano_exercicio = 2024 # defailt value 2024
 
@@ -84,16 +130,14 @@ def process_input_data(input_data_list : list) -> None:
         # initialize all current parameter values from input data list
         for key, value in current_Data_map.items():
             if key == 'numero_contribuinte':
-                current_umero_contribuinte = value
+                current_numero_contribuinte = value
             if key == 'parcela':
                 current_parcela = value
             if key == 'ano_exercicio':
                 current_ano_exercicio = value
         
         # calculate the text of the current captcha image 
-        current_captcha_base64_encoded_image = generateCaptchaImage(session)
-        current_captcha_image_bytes =  my_base64decode(current_captcha_base64_encoded_image)
-        current_captcha_image = image_bytes_to_image(current_captcha_image_bytes)
+        current_captcha_image = generateCaptchaImage(session)
         current_captcha_text = my_ocr(current_captcha_image)
             
         if is_not_debitAutomatic(
