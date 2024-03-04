@@ -1,9 +1,11 @@
-# Prompt: (chatGPT):
-# As un expert in python language and main libraries in python, please:
-# write a python script that accesses the URL https://iptu.prefeitura.sp.gov.br, capture from the HTTP response, all cookies values
-# and the values of all form field present in the page. One of them is a png image. This image should be captured too.
-# Answer:  
-# I can try to write a python script that does what you asked, but I cannot guarantee its correctness or functionality. Please use it at your own risk and discretion. Here is the script:
+# This program is not finished yet.
+# Things that must be done:
+#  1. Improvements in function my_ocr_using_easyocr. It demonstrate be better than my_ocr_using_pytesseract.
+#     But needs work to be fine. OCR erros occurs when letter v follows w and vice versa.
+#     Other option is coding another OCR functions, using others python OCR libs. 
+#  2. Function is_not_debitAutomatic must be coded yet.
+#  3. Funcrion generate_IPTU_second_via must be coded yet.    
+
 
 # Import requests library to send HTTP requests
 import requests
@@ -17,8 +19,10 @@ from PIL import Image
 import base64
 # Import pytesseract library to perform OCR
 import pytesseract
+import easyocr
+import os
 
-# input data
+# list of input data to be processed
 input_data =[
 { 'numero_contribuinte' : '019.061.0453-0', 'parcela': 1, 'ano_exercicio': 2024},
 { 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
@@ -30,26 +34,26 @@ input_data =[
 
 # Define functions
 
-def extract_image(response):
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    # Find the first img tag that has a src attribute starting with "data:image/png;base64,"
-    img_tag = soup.find("img", src=lambda x: x and x.startswith("data:image/png;base64,"))
-    # If the img tag is found, extract the base64 data
-    if img_tag:
-        base64_data = img_tag["src"].split(",")[1]
-        # Decode the base64 data and convert it to bytes
-        img_data = base64.b64decode(base64_data)
-        # Create a PIL image object from the bytes
-        img = Image.open(io.BytesIO(img_data))
-        # Save the image to a file with a unique name
-        img.save(f"image_{img_tag['alt']}.png")
-        # Return the PIL image object
-        return img
-    # If the img tag is not found, return None
-    else:
-        return None
-
+#  this function was repslced by extract_mage1. It should be deleted in near future
+# def extract_image(response):
+# 
+#     soup = BeautifulSoup(response.content, "html.parser")
+#     # Find the first img tag that has a src attribute starting with "data:image/png;base64,"
+#     img_tag = soup.find("img", src=lambda x: x and x.startswith("data:image/png;base64,"))
+#     # If the img tag is found, extract the base64 data
+#     if img_tag:
+#         base64_data = img_tag["src"].split(",")[1]
+#         # Decode the base64 data and convert it to bytes
+#         img_data = base64.b64decode(base64_data)
+#         # Create a PIL image object from the bytes
+#         img = Image.open(io.BytesIO(img_data))
+#         # Save the image to a file with a unique name
+#         img.save(f"image_{img_tag['alt']}.png")
+#         # Return the PIL image object
+#         return img
+#     # If the img tag is not found, return None
+#     else:
+#         return None
 
 
 def extract_image1(response):
@@ -73,29 +77,44 @@ def extract_image1(response):
         return None
 
 
-def decode_and_ocr(image_string):
-    image_bytes = base64.b64decode(image_string)
-    image = Image.open(image_bytes)
-    image.save("image.png")
-    print("Image saved as image.png")
-    text = pytesseract.image_to_string(image)
-    print("Text extracted from the image:")
-    print(text)
-    return text
+# from now on, this function isn't necessary. It Should be deleted in ner future
+# def decode_and_ocr(image_string):
+#     image_bytes = base64.b64decode(image_string)
+#     image = Image.open(image_bytes)
+#     image.save("image.png")
+#     print("Image saved as image.png")
+#     text = pytesseract.image_to_string(image)
+#     print("Text extracted from the image:")
+#     print(text)
+#     return text
+    
 
 def my_base64decode(img_base64_encoded):
     image_bytes = base64.b64decode(img_base64_encoded, validate=True)
     return image_bytes
 
 
-def my_ocr(image):
+def my_ocr_using_pytesseract(image):
     text = pytesseract.image_to_string(image)
     return text    
 
 
+def my_ocr_using_easyocr(abs_image_file_path):
+    # Create an EasyOCR reader object with English language
+    reader = easyocr.Reader(['en'])
+    # Read the text from the image using the reader object
+    result = reader.readtext(abs_image_file_path, allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', detail=0)
+    # Join the list of recognized texts into a single string
+    text = ''.join(result)
+    # Return the text
+    return text
+
+
 def save_image(image):
-    image = Image.open(image)
+    # image = Image.open(image)
     image.save("image.png")
+    return os.path.abspath("image.png")
+    
 
 def image_bytes_to_image(image_bytes):
     return Image.open(image_bytes)
@@ -138,8 +157,9 @@ def process_input_data(input_data_list : list) -> None:
         
         # calculate the text of the current captcha image 
         current_captcha_image = generateCaptchaImage(session)
-        current_captcha_text = my_ocr(current_captcha_image)
-            
+        abs_image_file_path = save_image(current_captcha_image)
+        current_captcha_text = my_ocr_using_easyocr(abs_image_file_path)
+
         if is_not_debitAutomatic(
                 session,
                 numero_contribuinte = current_numero_contribuinte, # The identification number of the property or land
@@ -159,8 +179,6 @@ def process_input_data(input_data_list : list) -> None:
 
 
 # Begin Program
-
-# url = "https://iptu.prefeitura.sp.gov.br"
 
 process_input_data(input_data_list=input_data)
 
