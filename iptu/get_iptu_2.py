@@ -1,7 +1,7 @@
 # This program is not finished yet.
 # Things that must be done:
 #  1. Improvements in function my_ocr_using_easyocr. It demonstrate be better than my_ocr_using_pytesseract.
-#     But needs work to be fine. OCR erros occurs when letter v follows w and vice versa.
+#     But needs work to become fine. OCR erros occur when letter v follows w and vice versa.
 #     Other option is coding another OCR functions, using others python OCR libs. 
 #  2. Function is_not_debitAutomatic must be coded yet.
 #  3. Funcrion generate_IPTU_second_via must be coded yet.    
@@ -17,7 +17,7 @@ import requests
 from bs4 import BeautifulSoup
 # Import io library to handle binary data
 import io
-# Import PIL library to handle images
+# Import PIL library to handle images (pillow lib version 9.5.0 must be used)
 from PIL import Image
 # Import base64 library to decode the image string
 import base64
