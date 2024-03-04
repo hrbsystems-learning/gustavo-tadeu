@@ -5,7 +5,11 @@
 #     Other option is coding another OCR functions, using others python OCR libs. 
 #  2. Function is_not_debitAutomatic must be coded yet.
 #  3. Funcrion generate_IPTU_second_via must be coded yet.    
-
+# IMPORTANT: It is necessary to use the pillow version 9.5.0, because some dependencies on second and higher levels
+#            are uncompatable with pillow versions higher than 9.5.0
+# to install or replace the current version of pillow library in your Python Virtual Environment
+# use the command below:
+#   conda install pillow=9.5.0  
 
 # Import requests library to send HTTP requests
 import requests
