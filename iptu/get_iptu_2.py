@@ -25,6 +25,8 @@ import base64
 import pytesseract
 import easyocr
 import os
+# import ocr lib OCRopus
+import ocrolib
 
 # list of input data to be processed
 input_data =[
@@ -111,6 +113,52 @@ def my_ocr_using_easyocr(abs_image_file_path):
     # Join the list of recognized texts into a single string
     text = ''.join(result)
     # Return the text
+    return text
+
+
+def my_ocr_using_OCRopus(image_or_path):
+    
+    # Check if the input is a PIL image or a string
+    if isinstance(image_or_path, Image.Image):
+        # Convert the PIL image to a numpy array
+        image = ocrolib.pil2array(image_or_path)
+    elif isinstance(image_or_path, str):
+        # Read the image from the file path
+        image = ocrolib.read_image_gray(image_or_path)
+    else:
+        # Raise an error if the input is invalid
+        raise ValueError("The input must be a PIL image or a string of absolute file path of a png image")
+    
+    # Binarize the image using the default parameters
+    binary = ocrolib.binarize(image)
+    # Segment the image into lines using the default parameters
+    lines = ocrolib.compute_lines(binary)
+    # Recognize the text from each line using the default model
+    text = ""
+    for line in lines:
+        # Crop the line from the binary image
+        line_image = binary[line[0]:line[1],line[2]:line[3]]
+        # Recognize the text using the default model
+        line_text = ocrolib.recognize_text(line_image)
+        # Append the text to the output string
+        text += line_text + "\n"
+        # Return the text
+        return text
+
+
+def my_ocr_using_OCRopus(image_path):
+
+    image = Image.open(image_path)
+
+    # Convert to numpy array
+    image = ocrolib.pil2array(image)
+
+    # Apply OCRopus binarization
+    binary = ocrolib.binarize(image)
+
+    # Recognize text using OCRopus
+    text = ocrolib.ocr_single_line(binary)
+
     return text
 
 
