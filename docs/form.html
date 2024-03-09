@@ -1,0 +1,95 @@
+ <form id="formEmitirBoleto" method="post" action="/" class="form-horizontal">
+ 
+       <input
+        name="__RequestVerificationToken"
+        type="hidden"
+        value="QXsEellKT4jFYNA8-3NinXRLMcoNKnpn7rMsSUEMN7mRyeB7pSgeiXgr0rSGmkoquyvxIw-21aMt8cSP7__CFujaRv01MXZxGbowQR5CAEM1" />
+        
+        <div>
+           <div class="form-group">
+                <label for="txtNumeroContribuinte" class="control-label col-lg-5 col-md-5 col-xs-12">Número do Contribuinte:</label>
+                 <div class="col-lg-2 col-md-5 col-xs-12">
+                            <input class="form-control wdt-campos" id="txtNumeroContribuinte" name="NumeroContribuinte" type="text" value="" />
+                 </div>
+                 </div>
+                 </div>
+        <div>
+            <div class="form-group">
+                <input data-val="true" data-val-number="The field Parcela must be a number." id="numParcela" name="Parcela" type="hidden" value="" />
+                <label for="comboBoxParcela" class="control-label col-lg-5 col-md-5 col-xs-12">Parcela a ser impressa:</label>
+                <div class="col-lg-2 col-md-5 col-xs-12">
+                    <select id="comboBoxParcela" name="parcelas" class="form-control wdt-campos">
+                        <option value="1">Parcela 01</option>
+                        <option value="2">Parcela 02</option>
+                        <option value="3">Parcela 03</option>
+                        <option value="4">Parcela 04</option>
+                        <option value="5">Parcela 05</option>
+                        <option value="6">Parcela 06</option>
+                        <option value="7">Parcela 07</option>
+                        <option value="8">Parcela 08</option>
+                        <option value="9">Parcela 09</option>
+                        <option value="10">Parcela 10</option>
+                        <option value="0">À Vista</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="form-group">
+                <label for="txtExercicio" class="control-label col-lg-5 col-md-5 col-xs-12">Exercício (AAAA):</label>
+                <div class="col-lg-1 col-md-2 col-xs-6">
+                    <input class="form-control" id="txtExercicio" maxlength="4" name="Exercicio" type="text" value="" />
+                </div>
+            </div>
+        </div>
+        
+        <input data-val="true" data-val-number="The field NumeroNotificacaoLancamento must be a number." id="numNL" name="NumeroNotificacaoLancamento" type="hidden" value="" />
+                
+        <div id="divNL">
+        <div class="form-group">
+            <label for="comboBoxNL" class="control-label col-lg-5 col-md-5 col-xs-12">NR:</label>
+            <div class="col-lg-2 col-md-5 col-xs-12">
+                <select id="comboBoxNL" name="numeroNotificacaoLancamento" class="form-control wdt-campos"></select>
+            </div>
+        </div>
+
+        </div>
+                
+        <div id="divCaptcha">
+            <div>
+                <div class="form-group">
+                    <label for="txtCaptcha" class="control-label col-lg-5 col-md-5 col-xs-12">Código da imagem:</label>
+                    <div class="col-lg-2 col-md-2 col-xs-6">
+                        <img id="captchaImagem" src="/Content/Imagens/loading.gif" alt="Ilustração do código captcha" title="Código Captcha" />
+                        
+                        <input autocomplete="off" class="form-control" id="txtCaptcha" maxlength="4" name="ValorDigitado" type="text" value="" />
+                        <label id="lblTocarAudio" onclick="TocarAudio()"><i class="icon icon-volume-up"></i>Ouvir Som</label>
+                    </div>
+                </div>
+            </div>
+
+
+         <div class="form-group">
+              <div class="col-sm-offset-5">
+                   <button id="btnGerarCaptcha" name="gerarNovaCaptcha" class="btn btn-success" type="button"><span class="icon icon-random"></span>Gerar Novo Código</button>
+              </div>
+        </div>
+        </div>
+
+
+        <div class="form-group">
+             <div class="col-sm-offset-5">
+                 <button id="btnGerarSegundaVia" name="gerarSegundaVia" class="btn btn-success" type="button" disabled><span class="icon icon-file-text"></span>Gerar 2ª Via</button>
+                 <button id="btnLimpar" name="limpar" class="btn btn-success" type="button"><span class="icon icon-eraser"></span>Limpar</button>
+             </div>
+       </div>
+       
+       
+       <div class="form-group">
+            <div class="col-xs-12" id="divMensagem">Para completa funcionalidade deste site &#233; necess&#225;rio habilitar o JavaScript.</div>
+            </div>
+           
+           
+           
+           
+ </form>

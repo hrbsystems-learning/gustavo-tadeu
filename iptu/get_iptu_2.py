@@ -12,6 +12,7 @@
 #   conda install pillow=9.5.0  
 
 # Import requests library to send HTTP requests
+from typing import Dict
 import requests
 # Import BeautifulSoup library to parse the HTML content
 from bs4 import BeautifulSoup
@@ -25,8 +26,7 @@ import base64
 import pytesseract
 import easyocr
 import os
-# import ocr lib OCRopus
-import ocrolib
+
 
 # list of input data to be processed
 input_data =[
@@ -116,52 +116,6 @@ def my_ocr_using_easyocr(abs_image_file_path):
     return text
 
 
-def my_ocr_using_OCRopus(image_or_path):
-    
-    # Check if the input is a PIL image or a string
-    if isinstance(image_or_path, Image.Image):
-        # Convert the PIL image to a numpy array
-        image = ocrolib.pil2array(image_or_path)
-    elif isinstance(image_or_path, str):
-        # Read the image from the file path
-        image = ocrolib.read_image_gray(image_or_path)
-    else:
-        # Raise an error if the input is invalid
-        raise ValueError("The input must be a PIL image or a string of absolute file path of a png image")
-    
-    # Binarize the image using the default parameters
-    binary = ocrolib.binarize(image)
-    # Segment the image into lines using the default parameters
-    lines = ocrolib.compute_lines(binary)
-    # Recognize the text from each line using the default model
-    text = ""
-    for line in lines:
-        # Crop the line from the binary image
-        line_image = binary[line[0]:line[1],line[2]:line[3]]
-        # Recognize the text using the default model
-        line_text = ocrolib.recognize_text(line_image)
-        # Append the text to the output string
-        text += line_text + "\n"
-        # Return the text
-        return text
-
-
-def my_ocr_using_OCRopus(image_path):
-
-    image = Image.open(image_path)
-
-    # Convert to numpy array
-    image = ocrolib.pil2array(image)
-
-    # Apply OCRopus binarization
-    binary = ocrolib.binarize(image)
-
-    # Recognize text using OCRopus
-    text = ocrolib.ocr_single_line(binary)
-
-    return text
-
-
 def save_image(image):
     # image = Image.open(image)
     image.save("image.png")
@@ -179,7 +133,15 @@ def generateCaptchaImage(session : requests.session):
     params = {"_": 1708869910143}
     response = session.get(url, params=params)
     image = extract_image1(response)
-    return image
+    return image, get_cookies_from_response(response)
+
+
+def get_cookies_from_response(response: requests.Response) -> Dict[str, str]:
+    cookies = {}
+    for cookie in response.cookies:
+        cookies[cookie.name] = cookie.value
+    return cookies
+
 
 def is_not_debitAutomatic(session, numero_contribuinte, parcela_a_pagar, ano_exercicio, captcha_text):
     pass
@@ -190,7 +152,10 @@ def generate_IPTU_second_via(session,numero_contribuinte, parcela_a_pagar, ano_e
 def process_input_data(input_data_list : list) -> None:
 
     session = requests.session()
-    session.get("https://iptu.prefeitura.sp.gov.br")
+    session_resp = session.get("https://iptu.prefeitura.sp.gov.br")
+    cookies_map1 = get_cookies_from_response(session_resp)
+    print(">>>>>>>>>> response.cokies 1 >>>>>:")
+    print(cookies_map1)
 
     current_numero_contribuinte = '019.061.0453-0' # initial value - empty string
     current_parcela = 1 # default value 1
@@ -208,7 +173,9 @@ def process_input_data(input_data_list : list) -> None:
                 current_ano_exercicio = value
         
         # calculate the text of the current captcha image 
-        current_captcha_image = generateCaptchaImage(session)
+        current_captcha_image, cookies_map2 = generateCaptchaImage(session)
+        print(">>>>>>>>>> response.cokies 2 >>>>>:")
+        print(cookies_map2)
         abs_image_file_path = save_image(current_captcha_image)
         current_captcha_text = my_ocr_using_easyocr(abs_image_file_path)
 
