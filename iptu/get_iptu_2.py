@@ -3,8 +3,7 @@
 #  1. Improvements in function my_ocr_using_easyocr. It demonstrate be better than my_ocr_using_pytesseract.
 #     But needs work to become fine. OCR erros occur when letter v follows w and vice versa.
 #     Other option is coding another OCR functions, using others python OCR libs. 
-#  2. Function is_not_debitAutomatic must be coded yet.
-#  3. Funcrion generate_IPTU_second_via must be coded yet.    
+#  2. Funcrion generate_IPTU_second_via must be coded yet.    
 # IMPORTANT: It is necessary to use the pillow version 9.5.0, because some dependencies on second and higher levels
 #            are incompatable with pillow versions higher than 9.5.0
 # to install or replace the current version of pillow library in your Python Virtual Environment
@@ -12,7 +11,6 @@
 #   conda install pillow=9.5.0  
 
 # Import requests library to send HTTP requests
-from typing import Dict
 import requests
 # Import BeautifulSoup library to parse the HTML content
 from bs4 import BeautifulSoup
@@ -27,14 +25,13 @@ import pytesseract
 import easyocr
 import os
 
-
 # list of input data to be processed
 input_data =[
-{ 'numero_contribuinte' : '019.061.0453-0', 'parcela': 1, 'ano_exercicio': 2024},
-{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
-{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
-{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
-{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024},
+{ 'numero_contribuinte' : '019.061.0453-0', 'parcela': 1, 'ano_exercicio': 2024, "debito_automatico" : False},
+{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024, "debito_automatico" : False},
+{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024, "debito_automatico" : False},
+{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024, "debito_automatico" : False},
+{ 'numero_contribuinte' : '012.168.0212-2', 'parcela': 1, 'ano_exercicio': 2024, "debito_automatico" : False},
 ]
 
 
@@ -133,33 +130,31 @@ def generateCaptchaImage(session : requests.session):
     params = {"_": 1708869910143}
     response = session.get(url, params=params)
     image = extract_image1(response)
-    return image, get_cookies_from_response(response)
+    return image
 
-
-def get_cookies_from_response(response: requests.Response) -> Dict[str, str]:
-    cookies = {}
-    for cookie in response.cookies:
-        cookies[cookie.name] = cookie.value
-    return cookies
-
-
-def is_not_debitAutomatic(session, numero_contribuinte, parcela_a_pagar, ano_exercicio, captcha_text):
-    pass
 
 def generate_IPTU_second_via(session,numero_contribuinte, parcela_a_pagar, ano_execicio, captcha_text):
-    pass
-
+    url = 'https://iptu.prefeitura.sp.gov.br' 
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    data = {
+        '__RequestVerificationToken': 'QXsEellKT4jFYNA8-3NinXRLMcoNKnpn7rMsSUEMN7mRyeB7pSgeiXgr0rSGmkoquyvxIw-21aMt8cSP7__CFujaRv01MXZxGbowQR5CAEM1',
+        'NumeroContribuinte': numero_contribuinte,
+        'Parcela': str(parcela_a_pagar),
+        'Exercicio': str(ano_execicio),
+        'ValorDigitado': captcha_text,
+    }
+    response = session.post(url, data=data, headers=headers)
+    return response
+    
 def process_input_data(input_data_list : list) -> None:
 
     session = requests.session()
-    session_resp = session.get("https://iptu.prefeitura.sp.gov.br")
-    cookies_map1 = get_cookies_from_response(session_resp)
-    print(">>>>>>>>>> response.cokies 1 >>>>>:")
-    print(cookies_map1)
+    session.get("https://iptu.prefeitura.sp.gov.br")
 
     current_numero_contribuinte = '019.061.0453-0' # initial value - empty string
     current_parcela = 1 # default value 1
     current_ano_exercicio = 2024 # defailt value 2024
+    current_debito_automatico = True # default value True
 
     for current_Data_map in input_data_list:
 
@@ -171,29 +166,22 @@ def process_input_data(input_data_list : list) -> None:
                 current_parcela = value
             if key == 'ano_exercicio':
                 current_ano_exercicio = value
+            if key == 'debito_automatico':
+                current_debito_automatico = value   
         
         # calculate the text of the current captcha image 
-        current_captcha_image, cookies_map2 = generateCaptchaImage(session)
-        print(">>>>>>>>>> response.cokies 2 >>>>>:")
-        print(cookies_map2)
+        current_captcha_image = generateCaptchaImage(session)
         abs_image_file_path = save_image(current_captcha_image)
         current_captcha_text = my_ocr_using_easyocr(abs_image_file_path)
 
-        if is_not_debitAutomatic(
-                session,
-                numero_contribuinte = current_numero_contribuinte, # The identification number of the property or land
-                parcela_a_pagar= current_parcela,
-                ano_execicio= current_ano_exercicio,
-                captcha_text= current_captcha_text):
-                
+        if not current_debito_automatico:                  
                 second_via_iptu = generate_IPTU_second_via(
                     session,
                     numero_contribuinte = current_numero_contribuinte, # The identification number of the property or land
                     parcela_a_pagar = current_parcela,
                     ano_execicio= current_ano_exercicio,
                     captcha_text= current_captcha_text
-                    )
-
+                )
                 print(second_via_iptu)
 
 
