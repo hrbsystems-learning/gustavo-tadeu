@@ -141,6 +141,7 @@ def generate_IPTU_second_via(session,numero_contribuinte, parcela_a_pagar, ano_e
         'NumeroContribuinte': numero_contribuinte,
         'Parcela': str(parcela_a_pagar),
         'Exercicio': str(ano_execicio),
+        'numeroNotificacaoLancamento': '',
         'ValorDigitado': captcha_text,
     }
     response = session.post(url, data=data, headers=headers)
