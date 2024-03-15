@@ -121,13 +121,10 @@ def my_ocr_using_google_ai_vision_api( image_file_path : str) -> str:
     # Path to service account key
     SERVICE_ACCOUNT_FILE = 'service-account-file.json' 
 
-    # Image file path 
-    # image_file_path = 'image.jpg'
-
     # Authenticate with service account
     credentials = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
+    )
 
     # Initialize cloud vision client
     client = vision.ImageAnnotatorClient(credentials=credentials)
