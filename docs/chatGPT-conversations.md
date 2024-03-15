@@ -67,4 +67,27 @@ $ pip install -r requirements.txt
 ```  
 I hope this helps you with generating a python requirements.txt file for your conda virtual environment. If you have any other questions, please feel free to ask me. blush  
   
+Prompt: (Cody ai assitent):  
+to access google ai vision aoi I need to have a file service-account-file.json. How to get this file?  
+Answer:  
+Here are the steps to obtain the service account credentials JSON file to access the Google Cloud Vision API:  
+Go to the Google Cloud Console and create a new project or select an existing one.  
+Enable the Cloud Vision API for your project.  
+Go to the Service accounts page in the console.  
+Click Create Service Account. Give it a name and description.  
+For role, select Project > Service Account Token Creator.
+Check the "Furnish a new private key" box and select JSON as the key type.  
+Click Create to generate and download the JSON service account key file.  
+Save this JSON file to your local machine. This is your service-account-file.json.  
+Set the environment variable GOOGLE_APPLICATION_CREDENTIALS to point to the downloaded service account file.  
+Now you can instantiate the Vision API client in code and pass the service account credentials to authenticate.  
+So in summary, you need to:  
+Create a GCP project  
+Enable the Vision API  
+Create a service account with the Token Creator role  
+Download the JSON key file  
+Set the path to this file as GOOGLE_APPLICATION_CREDENTIALS  
+This JSON key file contains the credentials to authenticate as the service account and access the Vision API. Let me know if you have any other questions!  
   
+  
+
