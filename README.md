@@ -18,3 +18,5 @@ conda install conda-forge::pytesseract or conda install pytesseract -c conda-for
 conda install conda-forge::pillow=9.5.0 or conda install pytesseract -c conda-forge
 conda install easyocr -c conda-forge
 conda install ocrolib -c conda-forge
+conda install -c conda-forge google-auth
+

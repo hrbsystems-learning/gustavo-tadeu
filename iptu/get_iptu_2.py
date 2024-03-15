@@ -24,6 +24,9 @@ import base64
 import pytesseract
 import easyocr
 import os
+from google.cloud import vision
+from google.oauth2 import service_account
+
 
 # list of input data to be processed
 input_data =[
@@ -111,6 +114,40 @@ def my_ocr_using_easyocr(abs_image_file_path):
     text = ''.join(result)
     # Return the text
     return text
+
+
+def my_ocr_using_google_ai_vision_api( image_file_path : str) -> str:
+
+    # Path to service account key
+    SERVICE_ACCOUNT_FILE = 'service-account-file.json' 
+
+    # Image file path 
+    # image_file_path = 'image.jpg'
+
+    # Authenticate with service account
+    credentials = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+
+    # Initialize cloud vision client
+    client = vision.ImageAnnotatorClient(credentials=credentials)
+
+    # Read image contents
+    with io.open(image_file_path, 'rb') as image_file:
+        content = image_file.read()
+
+    # Send image to cloud vision API
+    image = vision.Image(content=content)
+    response = client.document_text_detection(image=image)
+
+    detected_text = ''
+    # Print detected text
+    for page in response.full_text_annotation.pages:
+        print(page.property.detected_languages)
+        print('\n'.join(page.blocks))
+        detected_text = page.blocks
+
+    return detected_text
 
 
 def save_image(image):
