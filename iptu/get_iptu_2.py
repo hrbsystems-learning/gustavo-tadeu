@@ -119,7 +119,7 @@ def my_ocr_using_easyocr(abs_image_file_path):
 def my_ocr_using_google_ai_vision_api( image_file_path : str) -> str:
 
     # Path to service account key
-    SERVICE_ACCOUNT_FILE = 'service-account-file.json' 
+    SERVICE_ACCOUNT_FILE = '/home/helio/_work/_credentials/GCP/service-account-file-healthface-5324f-bf0a920dee18.json' 
 
     # Authenticate with service account
     credentials = service_account.Credentials.from_service_account_file(
