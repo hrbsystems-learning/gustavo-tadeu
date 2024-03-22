@@ -90,4 +90,17 @@ Set the path to this file as GOOGLE_APPLICATION_CREDENTIALS
 This JSON key file contains the credentials to authenticate as the service account and access the Vision API. Let me know if you have any other questions!  
   
   
+Prompt:  
+In , python , I use the conda as dependences manager and to create virtual envs. 
+I can use pip commands as well to install python packages in my conda virtual environments?
+Are there cons on installing python packages using pip in my conda virtual envs?  
+Answer:  
+Yes, you can use pip to install Python packages in your Conda virtual environments. However, there are some considerations to keep in mind:  
+•  https://www.bing.com/search?form=SKPBOT&q=Use%20Conda%20When%20Possible: It's recommended to install as many packages as possible with Conda before using pip. This is because Conda packages are pre-built and often include necessary dependencies that might be compiled differently than pip packages.  
+•  https://www.bing.com/search?form=SKPBOT&q=Environment%20Isolation: If you must use pip, do so in a Conda environment that's separate from your base environment to prevent any potential conflicts with packages managed by Conda.  
+•  https://www.bing.com/search?form=SKPBOT&q=Avoid%20Mixing%20Managers: Using pip after Conda can lead to a state that's hard to reproduce. pip may upgrade or remove a package which a Conda-installed package requires, potentially breaking the environment.  
+•  https://www.bing.com/search?form=SKPBOT&q=Conda%20Unawareness: Once pip is used to install software into a Conda environment, Conda will be unaware of these changes and may make modifications that could break the environment.  
+•  https://www.bing.com/search?form=SKPBOT&q=Recreate%20Rather%20Than%20Modify: If modifications are needed to the environment after using pip, it's better to create a new environment rather than running Conda after pip.  
+•  https://www.bing.com/search?form=SKPBOT&q=Upgrade%20Strategy: When using pip, run it with the --upgrade-strategy only-if-needed argument to prevent unnecessary upgrades to packages installed via Conda.  
+In summary, while pip can be used within Conda environments, it should be done cautiously and typically only when the required package is not available through Conda https://www.anaconda.com/blog/using-pip-in-a-conda-environment.  
 

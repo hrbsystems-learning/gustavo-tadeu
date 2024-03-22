@@ -207,7 +207,7 @@ def process_input_data(input_data_list : list) -> None:
         # calculate the text of the current captcha image 
         current_captcha_image = generateCaptchaImage(session)
         abs_image_file_path = save_image(current_captcha_image)
-        current_captcha_text = my_ocr_using_easyocr(abs_image_file_path)
+        current_captcha_text = my_ocr_using_google_ai_vision_api(abs_image_file_path)
 
         if not current_debito_automatico:                  
                 second_via_iptu = generate_IPTU_second_via(
