@@ -104,3 +104,47 @@ Yes, you can use pip to install Python packages in your Conda virtual environmen
 •  https://www.bing.com/search?form=SKPBOT&q=Upgrade%20Strategy: When using pip, run it with the --upgrade-strategy only-if-needed argument to prevent unnecessary upgrades to packages installed via Conda.  
 In summary, while pip can be used within Conda environments, it should be done cautiously and typically only when the required package is not available through Conda https://www.anaconda.com/blog/using-pip-in-a-conda-environment.  
 
+
+Prompt:  
+Please write a pyhon script that receives a string with the full path of a .png image file and executes OCR in all layers of the .png image, returning a list of strings with the text that was captured on each layer.  
+Answer:  
+Certainly! Below is a Python script that uses the pytesseract library to perform OCR on a .png image. This script assumes that the .png image has multiple layers, and it will attempt to extract text from each layer. However, please note that standard .png images do not contain layers like .psd or .tif files. If your .png image doesn't have layers, the script will treat the entire image as one layer.  
+```python
+import pytesseract
+from PIL import Image
+
+def ocr_png_layers(image_path):
+# Attempt to open the image file
+try:
+image = Image.open(image_path)
+except IOError:
+return "Error: The image file could not be opened."
+
+# List to hold the text of each layer
+text_layers = []
+
+# Check if the image has layers
+if image.is_animated:
+# Process each frame (layer) of the image
+for frame in range(0, image.n_frames):
+image.seek(frame)
+text = pytesseract.image_to_string(image)
+text_layers.append(text)
+else:
+# If the image is not animated, process it as a single layer
+text = pytesseract.image_to_string(image)
+text_layers.append(text)
+
+return text_layers
+```
+# Example usage:
+image_path = '/path/to/your/image.png'
+texts = ocr_png_layers(image_path)
+print(texts)  
+To use this script, you'll need to install the pytesseract and Pillow (PIL Fork) libraries if you haven't already:  
+pip install pytesseract Pillow  
+Also, make sure you have Tesseract OCR installed on your system, as pytesseract is a wrapper for Tesseract's OCR engine. You can download it from https://github.com/tesseract-ocr/tesseract.  
+Remember to replace '/path/to/your/image.png' with the actual path to your .png image file when using the script. Let me know if you need any more help!  
+
+
+

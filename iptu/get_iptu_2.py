@@ -147,6 +147,31 @@ def my_ocr_using_google_ai_vision_api( image_file_path : str) -> str:
     return detected_text
 
 
+def my_ocr_png_layers(image_path):
+    # Attempt to open the image file
+    try:
+        image = Image.open(image_path)
+    except IOError:
+        return "Error: The image file could not be opened."
+
+    # List to hold the text of each layer
+    text_layers = []
+
+    # Check if the image has layers
+    if image.is_animated:
+        # Process each frame (layer) of the image
+        for frame in range(0, image.n_frames):
+            image.seek(frame)
+            text = pytesseract.image_to_string(image)
+            text_layers.append(text)
+    else:
+        # If the image is not animated, process it as a single layer
+        text = pytesseract.image_to_string(image)
+        text_layers.append(text)
+
+    return text_layers
+
+
 def save_image(image):
     # image = Image.open(image)
     image.save("image.png")
